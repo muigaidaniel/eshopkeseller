@@ -14,7 +14,6 @@ class _HomeState extends State<Home> {
         foregroundColor: Colors.black,
         centerTitle: true,
         title: Text('Dashboard'),
-        elevation: 0.0,
         backgroundColor: Theme.of(context).accentColor,
       ),
       drawer: Navbar(),
@@ -36,21 +35,38 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Card(
+              child: ListTile(
+                  title: FlatButton.icon(
+                      onPressed: null,
+                      icon: Icon(Icons.track_changes),
+                      label: Text("Producs")),
+                  subtitle: Text(
+                    '120',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Theme
+                        .of(context)
+                        .accentColor, fontSize: 60.0),
+                  )),
+            ),
+          ),
           Expanded(
             child: GridView(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2),
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.all(22.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: Card(
                     child: ListTile(
                         title: FlatButton.icon(
                             onPressed: null,
-                            icon: Icon(Icons.track_changes),
-                            label: Text("Producs")),
+                            icon: Icon(Icons.category),
+                            label: Text("In stock")),
                         subtitle: Text(
-                          '120',
+                          '23',
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Theme
                               .of(context)
@@ -59,7 +75,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(22.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: Card(
                     child: ListTile(
                         title: FlatButton.icon(
@@ -76,7 +92,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(18.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: Card(
                     child: ListTile(
                         title: FlatButton.icon(
@@ -93,24 +109,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: Card(
-                    child: ListTile(
-                        title: FlatButton.icon(
-                            onPressed: null,
-                            icon: Icon(Icons.category),
-                            label: Text("Categories")),
-                        subtitle: Text(
-                          '23',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Theme
-                              .of(context)
-                              .accentColor, fontSize: 60.0),
-                        )),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(22.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: Card(
                     child: ListTile(
                         title: FlatButton.icon(
@@ -119,23 +118,6 @@ class _HomeState extends State<Home> {
                             label: Text("Orders")),
                         subtitle: Text(
                           '5',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Theme
-                              .of(context)
-                              .accentColor, fontSize: 60.0),
-                        )),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(22.0),
-                  child: Card(
-                    child: ListTile(
-                        title: FlatButton.icon(
-                            onPressed: null,
-                            icon: Icon(Icons.close),
-                            label: Text("Return")),
-                        subtitle: Text(
-                          '0',
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Theme
                               .of(context)

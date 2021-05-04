@@ -17,16 +17,16 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: Login(),
       routes: {
-        'home':(context)=> Home(),
+        'homepage':(context)=> Home(),
         'register':(context)=> Register(),
         'login' : (context)=> Login(),
         'addproduct':(context)=> AddProduct(),
       },
       title: 'E-Shop KE',
       theme: ThemeData(
-        primaryColor: Colors.black,
+        primaryColor: Colors.blue,
         accentColor: Colors.blueAccent,
         primarySwatch: Colors.cyan,
       ),

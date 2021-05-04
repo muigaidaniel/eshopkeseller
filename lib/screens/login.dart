@@ -90,7 +90,7 @@ class _LoginState extends State<Login> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                         width: MediaQuery.of(context).size.width*0.9, margin: EdgeInsets.symmetric(vertical: 10),
-                        child: Image.asset('assets/logo.png',height: 150,color: Colors.black,)),
+                        child: Image.asset('assets/logo.png',height: 150,color: Theme.of(context).primaryColor,)),
                   ),
                   Form(
                     key: _formKey,
