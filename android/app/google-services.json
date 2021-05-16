@@ -51,6 +51,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "325256037931-544teg80bf4f8g02jurbhn0gfjuedll8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muigaidaniel.eshopkeseller",
+            "certificate_hash": "2be47c56995f99b4cb2161ad6e3cc42aaa8ba57d"
+          }
+        },
+        {
           "client_id": "325256037931-g6uuhckkefv5t8ht7uta1ehhg1qslr2m.apps.googleusercontent.com",
           "client_type": 3
         }

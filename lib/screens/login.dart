@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eshopkeseller/components/loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
+import 'package:eshopkeseller/business_logic/user_provider.dart';
+import 'home.dart';
 
 
 class Login extends StatefulWidget {
@@ -13,85 +13,26 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final GoogleSignIn googleSignIn = new GoogleSignIn();
   final _formKey = GlobalKey<FormState>();
-  bool _isValid = false;
-
-  void _saveForm() {
-    setState(() {
-      _isValid = _formKey.currentState.validate();
-    });
-  }
-  bool isLoggedin= false;
-
-  Future signInWithGoogle () async{
-    setState(() {
-      isLoggedin=true;
-    });
-    final user= await googleSignIn.signIn();
-    if (user== null){
-      isLoggedin=false;
-      return;
-    }else{
-      GoogleSignInAccount googleUser= await googleSignIn.signIn();
-      GoogleSignInAuthentication googleSignInAuthentication = await googleUser.authentication;
-      AuthCredential credential =GoogleAuthProvider.credential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken);
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      Fluttertoast.showToast(msg: "Log in was successful");
-
-      CollectionReference users= FirebaseFirestore.instance.collection('sellers');
-      final firestoreInstance = FirebaseFirestore.instance;
-      firestoreInstance.collection("sellers").add(
-          {
-            "username" : googleUser.displayName,
-            "email" : googleUser.email,
-          });
-    }
-    if(isLoggedin){
-      Navigator.popAndPushNamed(context, 'homepage');
-    }
-  }
-
-  String email="";
-  String password="";
-  Future signInWithEmail () async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password
-      );
-      setState(() {
-        isLoggedin=true;
-      });
-      if(isLoggedin){
-        Navigator.popAndPushNamed(context, 'homepage');
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        Fluttertoast.showToast(msg:'No user found registered with that email.');
-      } else if (e.code == 'wrong-password') {
-        Fluttertoast.showToast(msg:'Wrong password for that user.');
-      }
-    }
-  }
+  final _key = GlobalKey<ScaffoldState>();
+  String _email="";
+  String _password="";
 
   @override
   Widget build(BuildContext context) {
+    final user= Provider.of<UserProvider>(context);
     return Scaffold(
-      body: SafeArea(
+      key: _key,
+      body: user.status == Status.Authenticating ? Loading()
+          : user.status == Status.Authenticated ? Home()
+          :  SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: Container(
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                        width: MediaQuery.of(context).size.width*0.9, margin: EdgeInsets.symmetric(vertical: 10),
-                        child: Image.asset('assets/logo.png',height: 150,color: Theme.of(context).primaryColor,)),
-                  ),
+                  Padding(padding: const EdgeInsets.all(8.0),
+                      child: Image.asset('assets/logo.png',height: 150,color: Theme.of(context).primaryColor,)),
                   Form(
                     key: _formKey,
                     child: Column(
@@ -99,7 +40,7 @@ class _LoginState extends State<Login> {
                         Container(
                           width: MediaQuery.of(context).size.width*0.9, margin: EdgeInsets.symmetric(vertical: 10),
                           child: TextFormField(
-                            onChanged: (val){setState(()=>email=val);},
+                            onChanged: (val){setState(()=>_email=val);},
                             style: TextStyle(fontSize: 20,),
                             decoration: InputDecoration(
                                 hintStyle: TextStyle( fontSize: 20),
@@ -121,9 +62,10 @@ class _LoginState extends State<Login> {
                         Container(
                           width: MediaQuery.of(context).size.width*0.9, margin: EdgeInsets.symmetric(vertical: 10),
                           child: TextFormField(
-                            onChanged: (val){setState(()=>password=val);},
+                            onChanged: (val){setState(()=>_password=val);},
                             style: TextStyle(fontSize: 20,),
                             decoration: InputDecoration(hintStyle: TextStyle( fontSize: 20), hintText: 'Password', enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2,),), border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 3,),), prefixIcon: Padding(child: Icon(Icons.lock,color: Theme.of(context).primaryColor), padding: EdgeInsets.only(left: 30, right: 10),)),
+                            obscureText: true,
                             validator: (value) {
                               if (value.isEmpty) {
                                 return "This field is required";
@@ -147,9 +89,11 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(30)
                       ),
                       child: Text('Login',style: TextStyle(fontSize: 20,color: Colors.white),),
-                      onPressed: (){
-                        _saveForm();
-                        signInWithEmail();
+                      onPressed: ()async{
+                        if(_formKey.currentState.validate()){
+                          if(!await user.signIn(_email, _password))
+                            _key.currentState.showSnackBar(SnackBar(content: Text("Sign In failed")));
+                        }
                       },),
                   ),
                   Container(
@@ -161,7 +105,7 @@ class _LoginState extends State<Login> {
                         icon: Icon(FontAwesomeIcons.google,color: Colors.red,),
                         label: Text('Log in with Google',style: TextStyle(fontSize: 20,color: Colors.red)),
                         onPressed: (){
-                          signInWithGoogle();
+                          user.signInWithGoogle();
                         },
                       )
                   ),
@@ -184,5 +128,4 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
 }

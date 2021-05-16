@@ -15,9 +15,7 @@ class _AddProductState extends State<AddProduct> {
   bool _isValid = false;
 
   final ImagePicker _picker=ImagePicker();
-  PickedFile _image1;
-  PickedFile _image2;
-  PickedFile _image3;
+  PickedFile _image;
   CollectionReference users= FirebaseFirestore.instance.collection('items');
   final firestoreInstance = FirebaseFirestore.instance;
   String itemname="";
@@ -28,11 +26,7 @@ class _AddProductState extends State<AddProduct> {
   void pic(ImageSource source,int imageNumber) async {
     final PickedFile = await _picker.getImage(source: source);
     switch(imageNumber){
-      case 1:  setState(() => _image1 = PickedFile);
-      break;
-      case 2:  setState(() => _image2 = PickedFile);
-      break;
-      case 3:  setState(() => _image3 = PickedFile);
+      case 1:  setState(() => _image = PickedFile);
       break;
     }
   }
@@ -67,34 +61,13 @@ class _AddProductState extends State<AddProduct> {
                       padding: const EdgeInsets.symmetric(vertical:10.0),
                       child: Container(
                         height: 200,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            SizedBox(width: 20),
-                            Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey.withOpacity(0.5),width: 2.5)
-                                ),
-                                height: 100,
-                                child: _displayChild1()
+                        child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.withOpacity(0.5),width: 2.5)
                             ),
-                            SizedBox(width: 20),
-                            Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey.withOpacity(0.5),width: 2.5)
-                                ),
-                                height: 100,
-                                child: _displayChild2()
-                            ),
-                            SizedBox(width: 20),
-                            Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey.withOpacity(0.5),width: 2.5)
-                                ),
-                                height: 100,
-                                child: _displayChild3()
-                            ),
-                          ],
+                            height: 100,
+                            child: _displayChild()
                         ),
                       ),
                     ),
@@ -167,47 +140,23 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  Widget _displayChild1() {
-    if (_image1 == null) {
+  Widget _displayChild() {
+    if (_image == null) {
       return FlatButton(
         minWidth: MediaQuery.of(context).size.width*0.25,
         onPressed: (){ pic(ImageSource.gallery,1);},
           child: Center(child: Icon(Icons.add, color: Colors.grey,)));
     } else {
-      return Image.file(File(_image1.path),fit: BoxFit.fill,);
+      return Image.file(File(_image.path),fit: BoxFit.fill,);
     }
   }
-  Widget _displayChild2() {
-    if (_image2 == null) {
-      return FlatButton(
-          minWidth: MediaQuery.of(context).size.width*0.25,
-          onPressed: (){ pic(ImageSource.gallery,2);},
-          child: Center(child: Icon(Icons.add, color: Colors.grey,)));
-    } else {
-      return Image.file(File(_image2.path), fit: BoxFit.fill,);
-    }
-  }
-  Widget _displayChild3() {
-    if (_image3 == null) {
-      return FlatButton(
-          minWidth: MediaQuery.of(context).size.width*0.25,
-          onPressed: (){ pic(ImageSource.gallery,3);},
-          child: Center(child: Icon(Icons.add, color: Colors.grey,)));
-    } else {
-      return Image.file(File(_image3.path),fit: BoxFit.fill,);
-    }
-  }
+
   void add(){
-    String imgUrl1;
-    String imgUrl2;
-    String imgUrl3;
+    String imgUrl;
     final FirebaseStorage storage= FirebaseStorage.instance;
-    final String picture1= "1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-    UploadTask task1= storage.ref().child(picture1).putFile(File(_image1.path));
-    final String picture2= "2${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-    UploadTask task2= storage.ref().child(picture2).putFile(File(_image2.path));
-    final String picture3= "3${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-    UploadTask task3= storage.ref().child(picture3).putFile(File(_image3.path));
+    final String picture= "${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+    UploadTask task= storage.ref().child(picture).putFile(File(_image.path));
+
 
     CollectionReference users= FirebaseFirestore.instance.collection('items');
     final firestoreInstance = FirebaseFirestore.instance;
@@ -218,9 +167,8 @@ class _AddProductState extends State<AddProduct> {
           "description" : description,
           "price" : price,
           "quantity" : quantity,
-          "picture1": picture1,
-          "picture2": picture2,
-          "picture3": picture3,
+          "picture": "gs://eshopke-9f17f.appspot.com/1620685984121$picture",
+
         });
   }
 }
